@@ -232,6 +232,11 @@ FPValue::FPValue(const std::string& normalValueExp)
 
     // 前後の不要な0を削除する
     RemoveRedundantZeros(vstr, dp);
+
+    // マイナスの0は許容しない
+    if (vstr == "0" && dp == 0) {
+        sign = 1;
+    }
 }
 
 // コンストラクタ。符号、数値文字列、数値文字列右端からの小数点の位置を元に初期化する。
@@ -260,6 +265,11 @@ FPValue::FPValue(int _sign, std::string _valueStr, int _decimalPointIndex)
 
     // 前後の不要な0を削除する
     RemoveRedundantZeros(vstr, dp);
+
+    // マイナスの0は許容しない
+    if (vstr == "0" && dp == 0) {
+        sign = 1;
+    }
 }
 
 // コピー・コンストラクタ
