@@ -102,9 +102,9 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
     printf("Add (%s, %s)\n", value1.to_s().c_str(), value2.to_s().c_str());
 
     // どちらかがゼロならば、ゼロでない方の数値をそのままリターンする
-    if (value1.vstr == "0" && value1.dp == 0) {
+    if (value1.IsZero()) {
         return value2;
-    } else if (value2.vstr == "0" && value2.dp == 0) {
+    } else if (value2.IsZero()) {
         return value1;
     }
     
@@ -158,11 +158,11 @@ FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
     printf("Sub (%s, %s)\n", minuend.to_s().c_str(), subtrahend.to_s().c_str());
 
     // minuendが0ならsubtrahendの符号を反転させたものをリターンする
-    if (minuend.vstr == "0" && minuend.dp == 0) {
+    if (minuend.IsZero()) {
         return subtrahend.Negate();
     }
     // subtrahendが0ならminuendをそのままリターンする
-    else if (subtrahend.vstr == "0" && subtrahend.dp == 0) {
+    else if (subtrahend.IsZero()) {
         return minuend;
     }
 
@@ -336,13 +336,17 @@ FPValue::FPValue(const FPValue& value)
     : sign(value.sign), vstr(value.vstr), dp(value.dp)
 {}
 
+// この数値がゼロかどうかを判定
+bool FPValue::IsZero() const
+{
+    return (vstr == "0" && dp == 0);
+}
 
 // 符号を反転させた数値を作成する。
 FPValue FPValue::Negate() const
 {
     return FPValue((sign > 0)? -1: 1, vstr, dp);
 }
-
 
 // FPValueを表す数値に変換する。
 std::string FPValue::to_s() const

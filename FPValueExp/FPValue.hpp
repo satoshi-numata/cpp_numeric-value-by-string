@@ -88,6 +88,9 @@ public:
     FPValue(const FPValue& value);
 
 public:
+    /*! この数値がゼロかどうかを判定します。 */
+    bool IsZero() const;
+
     /*! 符号を反転させた数値を作成します。 */
     FPValue Negate() const;
 
