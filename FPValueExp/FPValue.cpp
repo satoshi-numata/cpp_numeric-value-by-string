@@ -155,8 +155,67 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
 // 2つの数値の引き算
 FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
 {
-    throw std::runtime_error("Not implemented: FPValue::Sub()");
-    return FPValue("-9999");
+    printf("Sub (%s, %s)\n", minuend.to_s().c_str(), subtrahend.to_s().c_str());
+
+    // minuendが0ならsubtrahendの符号を反転させたものをリターンする
+    if (minuend.vstr == "0" && minuend.dp == 0) {
+        return subtrahend.Negate();
+    }
+    // subtrahendが0ならminuendをそのままリターンする
+    else if (subtrahend.vstr == "0" && subtrahend.dp == 0) {
+        return minuend;
+    }
+
+    // 符号が異なる場合は右辺の符号を反対にして足し算
+    if (minuend.sign != subtrahend.sign) {
+        printf("  -> Add\n");
+        return Add(minuend, subtrahend.Negate());
+    }
+
+    // v1を大きな数、v2を小さな数にする
+    int sign = minuend.sign;
+    FPValue v1(minuend);
+    FPValue v2(subtrahend);
+    if (AbsCompare(v1, v2) < 0) {
+        sign *= -1;
+        v1 = subtrahend;
+        v2 = minuend;
+    }
+    //printf("  v1=[%s], v2=[%s], sign=%d\n", v1.to_s().c_str(), v2.to_s().c_str(), sign);
+
+    // 文字列と小数点の位置を取得して長さを揃える
+    std::string vstr1 = v1.vstr;
+    std::string vstr2 = v2.vstr;
+    int dp1 = v1.dp;
+    int dp2 = v2.dp;
+    AdjustValueStringLengths(vstr1, dp1, vstr2, dp2);
+    //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
+
+    // 引き算の計算
+    std::string result = "";
+    int len = (int)vstr1.length();
+    bool underflow = false;
+    for (int i = 0; i < len; i++) {
+        int v1 = (int)(vstr1[len-i-1] - '0');
+        int v2 = (int)(vstr2[len-i-1] - '0');
+        //printf("  %d - %d (underflow=%d) ", v1, v2, (int)underflow);
+        if (underflow) {
+            v1 -= 1;
+        }
+        int v3 = v1 - v2;
+        underflow = (v3 < 0);
+        if (underflow) {
+            v3 += 10;
+        }
+        //printf("=> %d\n", v3);
+        result = (char)(v3 + '0') + result;
+    }
+
+    // 前後の不要な0を取り除く
+    RemoveRedundantZeros(result, dp1);
+    //printf("  result=[%s], dp1=%d\n", result.c_str(), dp1);
+
+    return FPValue(sign, result, dp1);
 }
 
 // 2つの数値の掛け算
