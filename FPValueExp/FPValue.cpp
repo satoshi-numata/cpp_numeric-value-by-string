@@ -1,6 +1,7 @@
 #include "FPValue.hpp"
 #include <cassert>
 #include <cctype>
+#include <cstdio>
 #include <strstream>
 #include <stdexcept>
 
@@ -8,8 +9,62 @@
 // 2つの数値の足し算
 FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
 {
-    throw std::runtime_error("Not implemented: FPValue::Add()");
-    return FPValue("-9999");
+    //printf("Add\n");
+    
+    // TODO: 足し算を引き算として処理する場合への対処
+    
+    // 文字列と小数点の位置の取得
+    std::string vstr1 = value1.str;
+    std::string vstr2 = value2.str;
+    int dp1 = value1.decimalPointIndex;
+    int dp2 = value2.decimalPointIndex;
+    //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
+
+    // 文字列の長さを合わせる
+    while (dp1 < dp2) {
+        vstr1 = vstr1 + "0";
+        dp1++;
+    }
+    while (dp2 < dp1) {
+        vstr2 = vstr2 + "0";
+        dp2++;
+    }
+    while (vstr1.length() < vstr2.length()) {
+        vstr1 = "0" + vstr1;
+    }
+    while (vstr2.length() < vstr1.length()) {
+        vstr2 = "0" + vstr2;
+    }
+    //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
+
+    // 足し算を計算する
+    std::string result = "";
+    int len = (int)vstr1.length();
+    int overflow = 0;
+    for (int i = 0; i < len; i++) {
+        int v1 = vstr1[len-i-1] - '0';
+        int v2 = vstr2[len-i-1] - '0';
+        int v3 = v1 + v2 + overflow;
+        //printf("  %d + %d (+ %d) => %d\n", v1, v2, overflow, v3);
+        overflow = v3 / 10;
+        //printf("    overflow = %d\n", overflow);
+        result = (char)((v3 % 10) + '0') + result;
+        //printf("    result = [%s]\n", result.c_str());
+    }
+    if (overflow > 0) {
+        result = (char)(overflow + '0') + result;
+    }
+    //printf("  result = [%s]\n", result.c_str());
+    
+    // 右端の0を取り除く
+    while (dp1 > 0 && result[result.length()-1] == '0') {
+        result = result.substr(0, result.length()-1);
+        dp1--;
+    }
+    //printf("  result = [%s]\n", result.c_str());
+
+    // 計算結果をリターンする
+    return FPValue(value1.sign, result, dp1);
 }
 
 // 2つの数値の引き算

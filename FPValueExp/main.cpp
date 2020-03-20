@@ -7,7 +7,7 @@ int main()
 {
     try {
         FPValue value1("23.25");
-        FPValue value2("0.14");
+        FPValue value2("90.15");
 
         printf("value1=[%s]\n", value1.to_s().c_str());
         printf("value2=[%s]\n", value2.to_s().c_str());
