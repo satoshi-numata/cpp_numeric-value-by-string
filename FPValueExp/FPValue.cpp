@@ -154,6 +154,14 @@ FPValue::FPValue(const std::string& normalValueExp)
             break;
         }
     }
+
+    // 整数部の不要な0の削除
+    int intLen = (int)str.length() - decimalPointIndex;
+    for (int i = 0; i < intLen - 1; i++) {
+        if (str[0] == '0') {
+            str = str.substr(1);
+        }
+    }
 }
 
 // コンストラクタ。符号、数値文字列、数値文字列右端からの小数点の位置を元に初期化する。
@@ -177,6 +185,14 @@ FPValue::FPValue(int _sign, std::string _valueStr, int _decimalPointIndex)
             decimalPointIndex--;
         } else {
             break;
+        }
+    }
+
+    // 整数部の不要な0の削除
+    int intLen = (int)str.length() - decimalPointIndex;
+    for (int i = 0; i < intLen - 1; i++) {
+        if (str[0] == '0') {
+            str = str.substr(1);
         }
     }
 }
