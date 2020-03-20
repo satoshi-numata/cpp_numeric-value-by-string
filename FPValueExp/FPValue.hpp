@@ -30,10 +30,10 @@ class FPValue
     int         sign;
 
     /*! 数値を表す10進数の数字のみからなる文字列 */
-    std::string str;
+    std::string vstr;
 
-    /*! 文字列右端からの位置で表す小数点の位置 */
-    int         decimalPointIndex;
+    /*! 小数点以下の数字の個数 */
+    int         dp;
 
 public:
     /*! 2つの数値の足し算を計算します。 */

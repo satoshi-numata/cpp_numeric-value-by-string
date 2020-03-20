@@ -6,21 +6,15 @@
 #include <stdexcept>
 
 
-// 2つの数値の足し算
-FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
+/*!
+    小数点の位置を合わせて、数値を表す文字列の長さを揃えます。
+    @param vstr1    数値1の文字列
+    @param dp1      数値1の小数点以下の数字の個数
+    @param vstr2    数値2の文字列
+    @param dp2      数値2の小数点以下の数字の個数
+ */
+static void AdjustValueStringLengths(std::string& vstr1, int& dp1, std::string& vstr2, int& dp2)
 {
-    //printf("Add\n");
-    
-    // TODO: 足し算を引き算として処理する場合への対処
-    
-    // 文字列と小数点の位置の取得
-    std::string vstr1 = value1.str;
-    std::string vstr2 = value2.str;
-    int dp1 = value1.decimalPointIndex;
-    int dp2 = value2.decimalPointIndex;
-    //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
-
-    // 文字列の長さを合わせる
     while (dp1 < dp2) {
         vstr1 = vstr1 + "0";
         dp1++;
@@ -35,6 +29,48 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
     while (vstr2.length() < vstr1.length()) {
         vstr2 = "0" + vstr2;
     }
+}
+
+/*!
+    数値を表す文字列の前後から、不要なゼロを削除します。
+    @param vstr     数値文字列
+    @param dp       小数点以下の数字の個数
+ */
+static void RemoveRedundantZeros(std::string& vstr, int& dp)
+{
+    // 小数点以下の不要な0の削除
+    while (dp > 0) {
+        if (vstr[vstr.length()-1] == '0') {
+            vstr = vstr.substr(0, vstr.length()-1);
+            dp--;
+        } else {
+            break;
+        }
+    }
+
+    // 整数部の不要な0の削除
+    int intLen = (int)vstr.length() - dp;
+    for (int i = 0; i < intLen - 1; i++) {
+        if (vstr[0] == '0') {
+            vstr = vstr.substr(1);
+        }
+    }
+}
+
+
+// 2つの数値の足し算
+FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
+{
+    //printf("Add\n");
+    
+    // TODO: 足し算を引き算として処理する場合への対処
+    
+    // 文字列と小数点の位置の取得
+    std::string vstr1 = value1.vstr;
+    std::string vstr2 = value2.vstr;
+    int dp1 = value1.dp;
+    int dp2 = value2.dp;
+    AdjustValueStringLengths(vstr1, dp1, vstr2, dp2);
     //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
 
     // 足し算を計算する
@@ -54,14 +90,11 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
     if (overflow > 0) {
         result = (char)(overflow + '0') + result;
     }
-    //printf("  result = [%s]\n", result.c_str());
-    
-    // 右端の0を取り除く
-    while (dp1 > 0 && result[result.length()-1] == '0') {
-        result = result.substr(0, result.length()-1);
-        dp1--;
-    }
-    //printf("  result = [%s]\n", result.c_str());
+    //printf("  result=[%s], dp1=%d\n", result.c_str(), dp1);
+
+    // 前後の不要な0を取り除く
+    RemoveRedundantZeros(result, dp1);
+    //printf("  result=[%s], dp1=%d\n", result.c_str(), dp1);
 
     // 計算結果をリターンする
     return FPValue(value1.sign, result, dp1);
@@ -98,7 +131,7 @@ FPValue FPValue::Pow(const FPValue& base, const FPValue& exponent)
 
 // デフォルトコンストラクタ
 FPValue::FPValue()
-    : sign(1), str("0"), decimalPointIndex(0)
+    : sign(1), vstr("0"), dp(0)
 {}
 
 // コンストラクタ。"3.14159", "+3.14", "-2.6352"といった文字列を元に初期化する。
@@ -106,7 +139,7 @@ FPValue::FPValue(const std::string& normalValueExp)
 {
     // 初期化
     sign = 1;
-    decimalPointIndex = 0;
+    dp = 0;
 
     // 文字列のパース
     bool hasDecimalPointAppeared = false;
@@ -123,8 +156,8 @@ FPValue::FPValue(const std::string& normalValueExp)
                 sstr << "Redundant dot appeared: index=" << i;
                 throw std::runtime_error(sstr.str());
             } else if (isdigit(c)) {
-                str += c;
-                decimalPointIndex++;
+                vstr += c;
+                dp++;
             } else {
                 std::strstream sstr;
                 sstr << "Unknown character appeared (decimal part): " << c << " (index=" << i << ")";
@@ -136,7 +169,7 @@ FPValue::FPValue(const std::string& normalValueExp)
             if (c == '.') {
                 hasDecimalPointAppeared = true;
             } else if (isdigit(c)) {
-                str += c;
+                vstr += c;
             } else {
                 std::strstream sstr;
                 sstr << "Unknown character appeared (integer part): " << c << " (index=" << i << ")";
@@ -145,23 +178,8 @@ FPValue::FPValue(const std::string& normalValueExp)
         }
     }
 
-    // 小数点以下の不要な0の削除
-    while (decimalPointIndex > 0) {
-        if (str[str.length()-1] == '0') {
-            str = str.substr(0, str.length()-1);
-            decimalPointIndex--;
-        } else {
-            break;
-        }
-    }
-
-    // 整数部の不要な0の削除
-    int intLen = (int)str.length() - decimalPointIndex;
-    for (int i = 0; i < intLen - 1; i++) {
-        if (str[0] == '0') {
-            str = str.substr(1);
-        }
-    }
+    // 前後の不要な0を削除する
+    RemoveRedundantZeros(vstr, dp);
 }
 
 // コンストラクタ。符号、数値文字列、数値文字列右端からの小数点の位置を元に初期化する。
@@ -175,49 +193,44 @@ FPValue::FPValue(int _sign, std::string _valueStr, int _decimalPointIndex)
     assert(_decimalPointIndex >= 0 && _decimalPointIndex <= _valueStr.length());
 
     sign = (_sign > 0)? 1: -1;
-    str = _valueStr;
-    decimalPointIndex = _decimalPointIndex;
+    vstr = _valueStr;
+    dp = _decimalPointIndex;
 
     // 小数点以下の不要な0の削除
-    while (decimalPointIndex > 0) {
-        if (str[str.length()-1] == '0') {
-            str = str.substr(0, str.length()-1);
-            decimalPointIndex--;
+    while (dp > 0) {
+        if (vstr[vstr.length()-1] == '0') {
+            vstr = vstr.substr(0, vstr.length()-1);
+            dp--;
         } else {
             break;
         }
     }
 
-    // 整数部の不要な0の削除
-    int intLen = (int)str.length() - decimalPointIndex;
-    for (int i = 0; i < intLen - 1; i++) {
-        if (str[0] == '0') {
-            str = str.substr(1);
-        }
-    }
+    // 前後の不要な0を削除する
+    RemoveRedundantZeros(vstr, dp);
 }
 
 // コピー・コンストラクタ
 FPValue::FPValue(const FPValue& value)
-    : sign(value.sign), str(value.str), decimalPointIndex(value.decimalPointIndex)
+    : sign(value.sign), vstr(value.vstr), dp(value.dp)
 {}
 
 
 // 符号を反転させた数値を作成する。
 FPValue FPValue::Negate() const
 {
-    return FPValue((sign > 0)? -1: 1, str, decimalPointIndex);
+    return FPValue((sign > 0)? -1: 1, vstr, dp);
 }
 
 
 // FPValueを表す数値に変換する。
 std::string FPValue::to_s() const
 {
-    std::string ret = str;
-    bool hasDecimalPoint = (decimalPointIndex > 0);
+    std::string ret = vstr;
+    bool hasDecimalPoint = (dp > 0);
     if (hasDecimalPoint) {
         hasDecimalPoint = false;
-        for (int i = (int)ret.length() - decimalPointIndex; i < ret.length(); i++) {
+        for (int i = (int)ret.length() - dp; i < ret.length(); i++) {
             if (ret[i] != '0') {
                 hasDecimalPoint = true;
                 break;
@@ -225,9 +238,9 @@ std::string FPValue::to_s() const
         }
     }
     if (hasDecimalPoint) {
-        ret.insert(ret.length() - decimalPointIndex, ".");
-    } else if (decimalPointIndex > 0) {
-        ret = ret.substr(0, ret.length() - decimalPointIndex);
+        ret.insert(ret.length() - dp, ".");
+    } else if (dp > 0) {
+        ret = ret.substr(0, ret.length() - dp);
     }
     if (ret[0] == '.') {
         ret = "0" + ret;
