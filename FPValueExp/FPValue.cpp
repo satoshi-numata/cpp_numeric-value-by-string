@@ -57,6 +57,44 @@ static void RemoveRedundantZeros(std::string& vstr, int& dp)
     }
 }
 
+// 2つの数値の絶対値の大小比較
+int FPValue::AbsCompare(const FPValue& value1, const FPValue& value2)
+{
+    //printf("AbsCompare (%s, %s)\n", value1.to_s().c_str(), value2.to_s().c_str());
+
+    // 文字列と小数点の位置を取得して長さを揃える
+    std::string vstr1 = value1.vstr;
+    std::string vstr2 = value2.vstr;
+    int dp1 = value1.dp;
+    int dp2 = value2.dp;
+    AdjustValueStringLengths(vstr1, dp1, vstr2, dp2);
+
+    // 上の桁から大小比較していく
+    for (int i = 0; i < vstr1.length(); i++) {
+        int v1 = (int)(vstr1[i] - '0');
+        int v2 = (int)(vstr2[i] - '0');
+        if (v1 != v2) {
+            return (v1 > v2)? 1: -1;
+        }
+    }
+
+    return 0;
+}
+
+// 2つの数値の大小比較
+int FPValue::Compare(const FPValue& value1, const FPValue& value2)
+{
+    //printf("Compare (%s, %s)\n", value1.to_s().c_str(), value2.to_s().c_str());
+
+    // 符号が異なる場合、プラスの数値の方が大きい
+    if (value1.sign != value2.sign) {
+        //printf("  Diff signs\n");
+        return (value1.sign > 0)? 1: -1;
+    }
+
+    // 絶対値の大小比較結果を符号に合わせる
+    return AbsCompare(value1, value2) * value1.sign;
+}
 
 // 2つの数値の足し算
 FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)

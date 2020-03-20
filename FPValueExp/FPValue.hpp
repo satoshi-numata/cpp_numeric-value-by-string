@@ -36,6 +36,12 @@ class FPValue
     int         dp;
 
 public:
+    /*! 2つの数値の絶対値の大小比較を行います。|value1|>|value2|のときは正の数を、同じ数であれば0を、|value1|<|value2|のときは負の数をリターンします。 */
+    static int AbsCompare(const FPValue& value1, const FPValue& value2);
+
+    /*! 2つの数値の大小比較を行います。value1>value2のときは正の数を、同じ数であれば0を、value1<value2のときは負の数をリターンします。 */
+    static int Compare(const FPValue& value1, const FPValue& value2);
+
     /*! 2つの数値の足し算を計算します。 */
     static FPValue Add(const FPValue& value1, const FPValue& value2);
 
