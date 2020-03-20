@@ -99,11 +99,25 @@ int FPValue::Compare(const FPValue& value1, const FPValue& value2)
 // 2つの数値の足し算
 FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
 {
-    //printf("Add\n");
+    printf("Add (%s, %s)\n", value1.to_s().c_str(), value2.to_s().c_str());
+
+    // どちらかがゼロならば、ゼロでない方の数値をそのままリターンする
+    if (value1.vstr == "0" && value1.dp == 0) {
+        return value2;
+    } else if (value2.vstr == "0" && value2.dp == 0) {
+        return value1;
+    }
     
-    // TODO: 足し算を引き算として処理する場合への対処
+    // 符号が異なる場合は引き算として処理する
+    if (value1.sign > 0 && value2.sign < 0) {
+        printf("  -> Sub\n");
+        return FPValue::Sub(value1, value2.Negate());
+    } else if (value1.sign < 0 && value2.sign > 0) {
+        printf("  -> Sub\n");
+        return FPValue::Sub(value2, value1.Negate());
+    }
     
-    // 文字列と小数点の位置の取得
+    // 文字列と小数点の位置を取得して長さを揃える
     std::string vstr1 = value1.vstr;
     std::string vstr2 = value2.vstr;
     int dp1 = value1.dp;
