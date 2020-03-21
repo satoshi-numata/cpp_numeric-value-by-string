@@ -266,6 +266,31 @@ FPValue FPValue::Mult(const FPValue& factor1, const FPValue& factor2)
 // 2つの数値の割り算
 std::pair<FPValue, FPValue> FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace)
 {
+    // ゼロ除算のチェック
+    if (divisor.IsZero()) {
+        throw std::runtime_error("Zero division is now allowed.");
+    }
+
+    // 数値文字列と小数点以下の数字の個数の取り出し
+    std::string vstr1 = dividend.vstr;
+    int dp1 = dividend.dp;
+    std::string vstr2 = divisor.vstr;
+    int dp2 = divisor.dp;
+
+    // 割る数が整数となるように桁合わせ
+    while (dp2 > 0) {
+        dp2--;
+        if (vstr2[0] == '0') {
+            vstr2 = vstr2.substr(1);
+        }
+        if (dp1 > 0) {
+            dp1--;
+        } else {
+            vstr1 = vstr1 + "0";
+        }
+    }
+    printf("vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
+
     throw std::runtime_error("Not implemented: FPValue::Div()");
     return std::pair<FPValue, FPValue>(FPValue(), FPValue());
 }
