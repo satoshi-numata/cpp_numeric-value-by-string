@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <strstream>
 #include <stdexcept>
+#include <vector>
 
 
 /*!
@@ -221,8 +222,45 @@ FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
 // 2つの数値の掛け算
 FPValue FPValue::Mult(const FPValue& factor1, const FPValue& factor2)
 {
-    throw std::runtime_error("Not implemented: FPValue::Mult()");
-    return FPValue("-9999");
+    // どちらかがゼロならば、結果はゼロ
+    if (factor1.IsZero() || factor2.IsZero()) {
+        return FPValue();
+    }
+
+    // 結果の符号は、符号同士の掛け算
+    int sign = factor1.sign * factor2.sign;
+
+    // 各桁ごとに掛け算を計算
+    std::vector<std::string> results;
+    int len2 = (int)factor2.vstr.length();
+    for (int i = 0; i < len2; i++) {
+        std::string result = "";
+        for (int j = 0; j < i; j++) {
+            result = result + "0";
+        }
+        int v2 = factor2.vstr[len2-i-1] - '0';
+        int overflow = 0;
+        int len1 = (int)factor1.vstr.length();
+        for (int j = 0; j < len1; j++) {
+            int v1 = factor1.vstr[len1-j-1] - '0';
+            int v3 = v1 * v2 + overflow;
+            overflow = v3 / 10;
+            v3 -= overflow * 10;
+            result = (char)(v3 + '0') + result;
+        }
+        if (overflow > 0) {
+            result = (char)(overflow + '0') + result;
+        }
+        results.push_back(result);
+    }
+
+    // 結果をすべて足し合わせる
+    FPValue resultValue;
+    for (int i = 0; i < results.size(); i++) {
+        resultValue = FPValue::Add(resultValue, FPValue(results[i]));
+    }
+
+    return FPValue(sign, resultValue.vstr, factor1.dp + factor2.dp);
 }
 
 // 2つの数値の割り算
