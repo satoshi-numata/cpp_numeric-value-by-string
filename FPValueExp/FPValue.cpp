@@ -298,19 +298,24 @@ FPValue::FPValue(const std::string& normalValueExp)
     }
 }
 
-// コンストラクタ。符号、数値文字列、数値文字列右端からの小数点の位置を元に初期化する。
-FPValue::FPValue(int _sign, std::string _valueStr, int _decimalPointIndex)
+// コンストラクタ。符号、数値文字列、小数点以下の数字の個数を元に初期化する。
+FPValue::FPValue(int _sign, std::string _vstr, int _dp)
 {
+    // 値の検証
     assert(_sign != 0);
-    assert(_valueStr.length() > 0);
-    for (int i = 0; i < _valueStr.length(); i++) {
-        assert(isdigit(_valueStr[i]));
+    assert(_vstr.length() > 0);
+    for (int i = 0; i < _vstr.length(); i++) {
+        assert(isdigit(_vstr[i]));
     }
-    assert(_decimalPointIndex >= 0 && _decimalPointIndex <= _valueStr.length());
+    assert(_dp >= 0);
 
+    // それぞれの値をメンバ変数にコピー
     sign = (_sign > 0)? 1: -1;
-    vstr = _valueStr;
-    dp = _decimalPointIndex;
+    vstr = _vstr;
+    dp = _dp;
+    while (dp > vstr.length()) {
+        vstr = "0" + vstr;
+    }
 
     // 小数点以下の不要な0の削除
     while (dp > 0) {

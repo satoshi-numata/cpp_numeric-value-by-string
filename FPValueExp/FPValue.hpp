@@ -78,11 +78,11 @@ public:
     /*!
         コンストラクタ。
         符号・数値文字列・小数点の位置をそれぞれ個別に指定して、この数値を初期化します。
-        @param sign     正の数なら0より大きい値を、負の数なら0より小さい値を指定します。
-        @param valueStr 数値文字列。符号や小数点を含みません。
-        @param decimalPointIndex    文字列右端からの文字数で表される小数点の位置。3.14の場合、数値文字列"314"に対して小数点の位置は2となります。整数123の場合、数値文字列"123"に対して小数点の位置は0となります。
+        @param sign 正の数なら0より大きい値を、負の数なら0より小さい値を指定します。
+        @param vstr 数値文字列。符号や小数点を含みません。
+        @param dp   小数点以下の数字の数。3.14の場合は2、整数123の場合は0となります。
      */
-    FPValue(int sign, std::string valueStr, int decimalPointIndex);
+    FPValue(int sign, std::string vstr, int dp);
 
     /*! コピー・コンストラクタ */
     FPValue(const FPValue& value);
