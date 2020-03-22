@@ -77,6 +77,13 @@ public:
         符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった文字列を元に、この数値を初期化します。
         @param normalValueExp 符号・数値・小数点を含む数値を表す文字列
      */
+    FPValue(const char *normalValueExp);
+
+    /*!
+        コンストラクタ。
+        符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった文字列を元に、この数値を初期化します。
+        @param normalValueExp 符号・数値・小数点を含む数値を表す文字列
+     */
     FPValue(const std::string& normalValueExp);
 
     /*!

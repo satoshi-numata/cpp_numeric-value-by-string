@@ -277,6 +277,60 @@ FPValue::FPValue()
 {}
 
 // コンストラクタ。"3.14159", "+3.14", "-2.6352"といった文字列を元に初期化する。
+FPValue::FPValue(const char *cNormalValueExp)
+{
+    // 初期化
+    sign = 1;
+    dp = 0;
+    std::string normalValueExp = cNormalValueExp;
+
+    // 文字列のパース
+    bool hasDecimalPointAppeared = false;
+    for (int i = 0; i < normalValueExp.length(); i++) {
+        char c = normalValueExp[i];
+        // 符号
+        if (i == 0 && (c == '+' || c == '-')) {
+            sign = (c == '+')? 1: -1;
+        }
+        // 小数点以下
+        else if (hasDecimalPointAppeared) {
+            if (c == '.') {
+                std::strstream sstr;
+                sstr << "Redundant dot appeared: index=" << i;
+                throw std::runtime_error(sstr.str());
+            } else if (isdigit(c)) {
+                vstr += c;
+                dp++;
+            } else {
+                std::strstream sstr;
+                sstr << "Unknown character appeared (decimal part): " << c << " (index=" << i << ")";
+                throw std::runtime_error(sstr.str());
+            }
+        }
+        // 整数部
+        else {
+            if (c == '.') {
+                hasDecimalPointAppeared = true;
+            } else if (isdigit(c)) {
+                vstr += c;
+            } else {
+                std::strstream sstr;
+                sstr << "Unknown character appeared (integer part): " << c << " (index=" << i << ")";
+                throw std::runtime_error(sstr.str());
+            }
+        }
+    }
+
+    // 前後の不要な0を削除する
+    RemoveRedundantZeros(vstr, dp);
+
+    // マイナスの0は許容しない
+    if (vstr == "0" && dp == 0) {
+        sign = 1;
+    }
+}
+
+// コンストラクタ。"3.14159", "+3.14", "-2.6352"といった文字列を元に初期化する。
 FPValue::FPValue(const std::string& normalValueExp)
 {
     // 初期化
