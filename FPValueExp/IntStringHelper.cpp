@@ -79,6 +79,11 @@ std::string IntString_Sub(const std::string& minuend_istr_n, const std::string& 
 // 商(quotient)をfirst, 余り(remainder)をsecondにしたFPValueのペアをリターンする。
 std::pair<std::string, std::string> IntString_Div(const std::string& dend_istr_n, const std::string& dor_istr_n)
 {
+    // ゼロ除算のチェック
+    if (dor_istr_n == "0") {
+        throw std::runtime_error("Zero division");
+    }
+
     // 割り算を計算する
     std::string result_istr = "";
     int dend_len = (int)dend_istr_n.length();
