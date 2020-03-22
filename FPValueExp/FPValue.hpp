@@ -35,6 +35,9 @@ class FPValue
     /*! 小数点以下の数字の個数 */
     int         dp;
 
+    /*! to_s()サポートのための文字列 */
+    std::string str_buffer;
+
 public:
     /*! 2つの数値の絶対値の大小比較を行います。|value1|>|value2|のときは正の数を、同じ数であれば0を、|value1|<|value2|のときは負の数をリターンします。 */
     static int AbsCompare(const FPValue& value1, const FPValue& value2);
@@ -110,8 +113,42 @@ public:
     std::string DecimalPart() const;
 
 public:
+    /*! 代入演算子のオーバーロード */
+    FPValue& operator=(const FPValue& other);
+
+    /*! 単項プラス演算子のオーバーロード */
+    FPValue operator+() const;
+
+    /*! 単項マイナス演算子のオーバーロード */
+    FPValue operator-() const;
+
+    /*! 加算演算子のオーバーロード */
+    FPValue operator+(const FPValue& other) const;
+
+    /*! 減算演算子のオーバーロード */
+    FPValue operator-(const FPValue& other) const;
+
+    /*! 乗算演算子のオーバーロード */
+    FPValue operator*(const FPValue& other) const;
+
+    /*! 除算演算子のオーバーロード */
+    FPValue operator/(const FPValue& other) const;
+
+    /*! 剰余演算子のオーバーロード */
+    FPValue operator%(const FPValue& other) const;
+
+    /*! C言語文字列へのキャストのサポート */
+    operator const char *();
+
+    /*! C++文字列へのキャストのサポート */
+    operator std::string();
+
+public:
     /*! この数値を表す文字列を、符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった形式でリターンします。 */
-    std::string to_s() const;
+    std::string to_s();
+
+    /*! この数値を表すC言語文字列を、符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった形式でリターンします。 */
+    const char *c_str();
 
 };
 

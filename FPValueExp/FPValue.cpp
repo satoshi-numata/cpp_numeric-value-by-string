@@ -159,11 +159,14 @@ FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
         return Add(minuend, subtrahend.Negate());
     }
 
-    // v1を大きな数、v2を小さな数にする
+    // v1を大きな数、v2を小さな数にする。同じ数の場合にはゼロをリターンする
     int sign = minuend.sign;
     FPValue v1(minuend);
     FPValue v2(subtrahend);
-    if (AbsCompare(v1, v2) < 0) {
+    int comp = AbsCompare(v1, v2);
+    if (comp == 0) {
+        return FPValue();
+    } else if (comp < 0) {
         sign *= -1;
         v1 = subtrahend;
         v2 = minuend;
@@ -245,6 +248,7 @@ FPValue FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decima
         // 最後の数の丸め
         if (roundLast) {
             result = FPValue::Add(FPValue(result), FPValue(roundStr)).to_s();
+            // TODO: 桁数がおかしい場合がある。1/22を10桁表示する場合など。
             result = result.substr(0, result.length() - 1);
         } else {
             result = result.substr(0, result.length()-1);
@@ -380,32 +384,105 @@ FPValue FPValue::Negate() const
     return FPValue((sign > 0)? -1: 1, vstr, dp);
 }
 
-// FPValueを表す数値に変換する。
-std::string FPValue::to_s() const
+// 代入演算子のオーバーロード
+FPValue& FPValue::operator=(const FPValue& other)
 {
-    std::string ret = vstr;
+    sign = other.sign;
+    vstr = other.vstr;
+    dp = other.dp;
+    return *this;
+}
+
+// 単項プラス演算子のオーバーロード
+FPValue FPValue::operator+() const
+{
+    return *this;
+}
+
+// 単項マイナス演算子のオーバーロード
+FPValue FPValue::operator-() const
+{
+    return Negate();
+}
+
+// 2項加算演算子のオーバーロード
+FPValue FPValue::operator+(const FPValue& other) const
+{
+    return FPValue::Add(*this, other);
+}
+
+// 2項減算演算子のオーバーロード
+FPValue FPValue::operator-(const FPValue& other) const
+{
+    return FPValue::Sub(*this, other);
+}
+
+// 2項乗算演算子のオーバーロード
+FPValue FPValue::operator*(const FPValue& other) const
+{
+    return FPValue::Mult(*this, other);
+}
+
+// 2項除算演算子のオーバーロード
+FPValue FPValue::operator/(const FPValue& other) const
+{
+    return FPValue::Div(*this, other, 10, true);
+}
+
+// 剰余演算子のオーバーロード
+FPValue FPValue::operator%(const FPValue& other) const
+{
+    FPValue quot = FPValue::Div(*this, other, 0, false);
+    return (*this - other * quot);
+}
+
+// C言語文字列へのキャストのサポート
+FPValue::operator const char *()
+{
+    to_s();
+    return str_buffer.c_str();
+}
+
+// C++文字列へのキャストのサポート
+FPValue::operator std::string()
+{
+    return to_s();
+}
+
+// FPValueを表す文字列表現に変換する。
+std::string FPValue::to_s()
+{
+    str_buffer = vstr;
     bool hasDecimalPoint = (dp > 0);
     if (hasDecimalPoint) {
         hasDecimalPoint = false;
-        for (int i = (int)ret.length() - dp; i < ret.length(); i++) {
-            if (ret[i] != '0') {
+        for (int i = (int)str_buffer.length() - dp; i < str_buffer.length(); i++) {
+            if (str_buffer[i] != '0') {
                 hasDecimalPoint = true;
                 break;
             }
         }
     }
     if (hasDecimalPoint) {
-        ret.insert(ret.length() - dp, ".");
+        str_buffer.insert(str_buffer.length() - dp, ".");
     } else if (dp > 0) {
-        ret = ret.substr(0, ret.length() - dp);
+        str_buffer = str_buffer.substr(0, str_buffer.length() - dp);
     }
-    if (ret[0] == '.') {
-        ret = "0" + ret;
+    if (str_buffer[0] == '.') {
+        str_buffer = "0" + str_buffer;
     }
     if (sign < 0) {
-        ret = "-" + ret;
+        str_buffer = "-" + str_buffer;
     }
 
-    return ret;
+    return str_buffer;
 }
+
+// FPValueを表すC言語の文字列表現に変換する。
+const char *FPValue::c_str()
+{
+    to_s();
+    return str_buffer.c_str();
+}
+
 
