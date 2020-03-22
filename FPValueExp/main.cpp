@@ -6,16 +6,16 @@
 int main()
 {
     try {
-        FPValue value1("2.5");
-        FPValue value2("1.01");
+        FPValue value1("2");
+        FPValue value2("20");
 
         printf("value1=[%s]\n", value1.to_s().c_str());
         printf("value2=[%s]\n", value2.to_s().c_str());
 
         // 2数の演算
-        printf("value1+value2=[%s]\n", (FPValue::Add(value1, value2)).to_s().c_str());
-        printf("value1-value2=[%s]\n", (FPValue::Sub(value1, value2)).to_s().c_str());
-        printf("value1*value2=[%s]\n", (FPValue::Mult(value1, value2)).to_s().c_str());
+        //printf("value1+value2=[%s]\n", (FPValue::Add(value1, value2)).to_s().c_str());
+        //printf("value1-value2=[%s]\n", (FPValue::Sub(value1, value2)).to_s().c_str());
+        //printf("value1*value2=[%s]\n", (FPValue::Mult(value1, value2)).to_s().c_str());
 
         // 割り算は、割られる数・割る数・商の小数点以下の桁数
         auto div = FPValue::Div(value1, value2, 10);

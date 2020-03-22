@@ -1,4 +1,6 @@
 #include "FPValue.hpp"
+#include "IntStringHelper.hpp"
+
 #include <cassert>
 #include <cctype>
 #include <cstdio>
@@ -264,32 +266,33 @@ FPValue FPValue::Mult(const FPValue& factor1, const FPValue& factor2)
 }
 
 // 2つの数値の割り算
+// 用語について：
+// 　　割られる数：dividend (dend)
+// 　　　　割る数：divisor (dor)
+// 　　　　　　商：quotient
+// 　　　　　余り：remainder
 std::pair<FPValue, FPValue> FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace)
 {
+    printf("Div (%s, %s, dplace=%d)\n", dividend.to_s().c_str(), divisor.to_s().c_str(), decimalPlace);
+
     // ゼロ除算のチェック
     if (divisor.IsZero()) {
         throw std::runtime_error("Zero division is now allowed.");
     }
 
-    // 数値文字列と小数点以下の数字の個数の取り出し
-    std::string vstr1 = dividend.vstr;
-    int dp1 = dividend.dp;
-    std::string vstr2 = divisor.vstr;
-    int dp2 = divisor.dp;
+    // 数値文字列と小数点以下の数字の個数を取り出し、桁数を合わせる
+    std::string remain_str = dividend.vstr;
+    int remain_dp = dividend.dp;
+    std::string dor_str = divisor.vstr;
+    int dor_dp = divisor.dp;
+    AdjustValueStringLengths(remain_str, remain_dp, dor_str, dor_dp);
+    remain_str = IntString_Normalize(remain_str);
+    dor_str = IntString_Normalize(dor_str);
 
-    // 割る数が整数となるように桁合わせ
-    while (dp2 > 0) {
-        dp2--;
-        if (vstr2[0] == '0') {
-            vstr2 = vstr2.substr(1);
-        }
-        if (dp1 > 0) {
-            dp1--;
-        } else {
-            vstr1 = vstr1 + "0";
-        }
-    }
-    printf("vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
+    // 割り算のメイン
+    printf("  remainder=[%s](dp=%d), divisor=[%s](dp=%d)\n", remain_str.c_str(), remain_dp, dor_str.c_str(), dor_dp);
+    std::pair<std::string, std::string> result = IntString_Div(remain_str, dor_str);
+    printf("  result: %s, %s\n", result.first.c_str(), result.second.c_str());
 
     throw std::runtime_error("Not implemented: FPValue::Div()");
     return std::pair<FPValue, FPValue>(FPValue(), FPValue());

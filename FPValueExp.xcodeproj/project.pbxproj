@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8E9F16CC2424C251007EAE0E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F16CB2424C251007EAE0E /* main.cpp */; };
 		8E9F16D42424C25A007EAE0E /* FPValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F16D22424C25A007EAE0E /* FPValue.cpp */; };
+		8E9F174724270831007EAE0E /* IntStringHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F174524270831007EAE0E /* IntStringHelper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		8E9F16CB2424C251007EAE0E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		8E9F16D22424C25A007EAE0E /* FPValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FPValue.cpp; sourceTree = "<group>"; };
 		8E9F16D32424C25A007EAE0E /* FPValue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FPValue.hpp; sourceTree = "<group>"; };
+		8E9F174524270831007EAE0E /* IntStringHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntStringHelper.cpp; sourceTree = "<group>"; };
+		8E9F174624270831007EAE0E /* IntStringHelper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IntStringHelper.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,8 @@
 				8E9F16CB2424C251007EAE0E /* main.cpp */,
 				8E9F16D32424C25A007EAE0E /* FPValue.hpp */,
 				8E9F16D22424C25A007EAE0E /* FPValue.cpp */,
+				8E9F174624270831007EAE0E /* IntStringHelper.hpp */,
+				8E9F174524270831007EAE0E /* IntStringHelper.cpp */,
 			);
 			path = FPValueExp;
 			sourceTree = "<group>";
@@ -126,6 +131,7 @@
 			files = (
 				8E9F16CC2424C251007EAE0E /* main.cpp in Sources */,
 				8E9F16D42424C25A007EAE0E /* FPValue.cpp in Sources */,
+				8E9F174724270831007EAE0E /* IntStringHelper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
