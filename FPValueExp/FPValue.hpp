@@ -2,7 +2,7 @@
 #define FPValue_hpp
 
 #include <string>
-#include <utility>
+
 
 enum RoundMode {
     /*! 数値をもっとも近い値に丸めます。真ん中の値は0から遠い方に丸められます。いわゆる四捨五入です。 */
