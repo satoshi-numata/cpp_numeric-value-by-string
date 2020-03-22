@@ -81,7 +81,7 @@ std::pair<std::string, std::string> IntString_Div(const std::string& dend_istr_n
 {
     // ゼロ除算のチェック
     if (dor_istr_n == "0") {
-        throw std::runtime_error("Zero division");
+        throw std::runtime_error("Zero division is now allowed.");
     }
 
     // 割り算を計算する

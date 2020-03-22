@@ -102,7 +102,7 @@ int FPValue::Compare(const FPValue& value1, const FPValue& value2)
 // 2つの数値の足し算
 FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
 {
-    printf("Add (%s, %s)\n", value1.to_s().c_str(), value2.to_s().c_str());
+    //printf("Add (%s, %s)\n", value1.to_s().c_str(), value2.to_s().c_str());
 
     // どちらかがゼロならば、ゼロでない方の数値をそのままリターンする
     if (value1.IsZero()) {
@@ -113,10 +113,10 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
     
     // 符号が異なる場合は引き算として処理する
     if (value1.sign > 0 && value2.sign < 0) {
-        printf("  -> Sub\n");
+        //printf("  -> Sub\n");
         return FPValue::Sub(value1, value2.Negate());
     } else if (value1.sign < 0 && value2.sign > 0) {
-        printf("  -> Sub\n");
+        //printf("  -> Sub\n");
         return FPValue::Sub(value2, value1.Negate());
     }
     
@@ -158,7 +158,7 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
 // 2つの数値の引き算
 FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
 {
-    printf("Sub (%s, %s)\n", minuend.to_s().c_str(), subtrahend.to_s().c_str());
+    //printf("Sub (%s, %s)\n", minuend.to_s().c_str(), subtrahend.to_s().c_str());
 
     // minuendが0ならsubtrahendの符号を反転させたものをリターンする
     if (minuend.IsZero()) {
@@ -171,7 +171,7 @@ FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
 
     // 符号が異なる場合は右辺の符号を反対にして足し算
     if (minuend.sign != subtrahend.sign) {
-        printf("  -> Add\n");
+        //printf("  -> Add\n");
         return Add(minuend, subtrahend.Negate());
     }
 
@@ -266,14 +266,11 @@ FPValue FPValue::Mult(const FPValue& factor1, const FPValue& factor2)
 }
 
 // 2つの数値の割り算
-// 用語について：
-// 　　割られる数：dividend (dend)
-// 　　　　割る数：divisor (dor)
-// 　　　　　　商：quotient
-// 　　　　　余り：remainder
-std::pair<FPValue, FPValue> FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace)
+FPValue FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace, bool roundLast)
 {
     printf("Div (%s, %s, dplace=%d)\n", dividend.to_s().c_str(), divisor.to_s().c_str(), decimalPlace);
+
+    assert(decimalPlace >= 0);
 
     // ゼロ除算のチェック
     if (divisor.IsZero()) {
@@ -289,13 +286,39 @@ std::pair<FPValue, FPValue> FPValue::Div(const FPValue& dividend, const FPValue&
     remain_str = IntString_Normalize(remain_str);
     dor_str = IntString_Normalize(dor_str);
 
-    // 割り算のメイン
-    printf("  remainder=[%s](dp=%d), divisor=[%s](dp=%d)\n", remain_str.c_str(), remain_dp, dor_str.c_str(), dor_dp);
-    std::pair<std::string, std::string> result = IntString_Div(remain_str, dor_str);
-    printf("  result: %s, %s\n", result.first.c_str(), result.second.c_str());
+    // 整数部の割り算
+    std::string result = "";
+    std::pair<std::string, std::string> div = IntString_Div(remain_str, dor_str);
+    result = result + div.first;
+    remain_str = div.second;
 
-    throw std::runtime_error("Not implemented: FPValue::Div()");
-    return std::pair<FPValue, FPValue>(FPValue(), FPValue());
+    // 小数部の割り算
+    if (remain_str != "0" && decimalPlace > 0) {
+        std::string roundStr = "0.";
+        result = result + ".";
+        for (int i = 0; i < decimalPlace+1; i++) {
+            remain_str = remain_str + "0";
+            div = IntString_Div(remain_str, dor_str);
+            result = result + div.first;
+            remain_str = div.second;
+            roundStr = roundStr + ((i < decimalPlace)? "0": "5");
+        }
+
+        // 最後の数の丸め
+        if (roundLast) {
+            result = FPValue::Add(FPValue(result), FPValue(roundStr)).to_s();
+            result = result.substr(0, result.length() - 1);
+        } else {
+            result = result.substr(0, result.length()-1);
+        }
+    }
+
+    // 符号をつける
+    if (dividend.sign * divisor.sign < 0) {
+        result = "-" + result;
+    }
+
+    return FPValue(result);
 }
 
 // baseのexponent乗

@@ -53,13 +53,14 @@ public:
 
     /*!
         2つの数値の割り算を計算します。
-        dividendをdivisorで、小数点以下decimalPlace桁まで割り算した商と余りをペアにしてリターンします。
+        dividendをdivisorで、小数点以下decimalPlace桁まで割り算した結果を計算します。
         @param dividend 割られる数
         @param divisor  割る数
         @param decimalPlace 商を小数点以下何桁まで計算するか
-        @return 商(quotient)をfirst, 余り(remainder)をsecondにしたFPValueのペア
+        @param roundLast    最後の数を丸めるかどうか。trueならば四捨五入します。
+        @return 割り算の結果
      */
-    static std::pair<FPValue, FPValue> Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace);
+    static FPValue Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace, bool roundLast);
 
     /*! 数値baseをexponent乗した数値を計算します。 */
     static FPValue Pow(const FPValue& base, const FPValue& exponent);
