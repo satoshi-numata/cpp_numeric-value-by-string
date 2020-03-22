@@ -6,7 +6,6 @@
 #include <cstdio>
 #include <strstream>
 #include <stdexcept>
-#include <vector>
 
 
 /*!
@@ -129,22 +128,7 @@ FPValue FPValue::Add(const FPValue& value1, const FPValue& value2)
     //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
 
     // 足し算を計算する
-    std::string result = "";
-    int len = (int)vstr1.length();
-    int overflow = 0;
-    for (int i = 0; i < len; i++) {
-        int v1 = vstr1[len-i-1] - '0';
-        int v2 = vstr2[len-i-1] - '0';
-        int v3 = v1 + v2 + overflow;
-        //printf("  %d + %d (+ %d) => %d\n", v1, v2, overflow, v3);
-        overflow = v3 / 10;
-        //printf("    overflow = %d\n", overflow);
-        result = (char)((v3 % 10) + '0') + result;
-        //printf("    result = [%s]\n", result.c_str());
-    }
-    if (overflow > 0) {
-        result = (char)(overflow + '0') + result;
-    }
+    std::string result = IntString_Add(vstr1, vstr2);
     //printf("  result=[%s], dp1=%d\n", result.c_str(), dp1);
 
     // 前後の不要な0を取り除く
@@ -195,29 +179,10 @@ FPValue FPValue::Sub(const FPValue& minuend, const FPValue& subtrahend)
     //printf("  vstr1=[%s], dp1=%d, vstr2=[%s], dp2=%d\n", vstr1.c_str(), dp1, vstr2.c_str(), dp2);
 
     // 引き算の計算
-    std::string result = "";
-    int len = (int)vstr1.length();
-    bool underflow = false;
-    for (int i = 0; i < len; i++) {
-        int v1 = (int)(vstr1[len-i-1] - '0');
-        int v2 = (int)(vstr2[len-i-1] - '0');
-        //printf("  %d - %d (underflow=%d) ", v1, v2, (int)underflow);
-        if (underflow) {
-            v1 -= 1;
-        }
-        int v3 = v1 - v2;
-        underflow = (v3 < 0);
-        if (underflow) {
-            v3 += 10;
-        }
-        //printf("=> %d\n", v3);
-        result = (char)(v3 + '0') + result;
-    }
+    std::string result = IntString_Sub(vstr1, vstr2);
 
-    // 前後の不要な0を取り除く
+    // 前後の不要な0を取り除いてリターン
     RemoveRedundantZeros(result, dp1);
-    //printf("  result=[%s], dp1=%d\n", result.c_str(), dp1);
-
     return FPValue(sign, result, dp1);
 }
 
@@ -232,45 +197,18 @@ FPValue FPValue::Mult(const FPValue& factor1, const FPValue& factor2)
     // 結果の符号は、符号同士の掛け算
     int sign = factor1.sign * factor2.sign;
 
-    // 各桁ごとに掛け算を計算
-    std::vector<std::string> results;
-    int len2 = (int)factor2.vstr.length();
-    for (int i = 0; i < len2; i++) {
-        std::string result = "";
-        for (int j = 0; j < i; j++) {
-            result = result + "0";
-        }
-        int v2 = factor2.vstr[len2-i-1] - '0';
-        int overflow = 0;
-        int len1 = (int)factor1.vstr.length();
-        for (int j = 0; j < len1; j++) {
-            int v1 = factor1.vstr[len1-j-1] - '0';
-            int v3 = v1 * v2 + overflow;
-            overflow = v3 / 10;
-            v3 -= overflow * 10;
-            result = (char)(v3 + '0') + result;
-        }
-        if (overflow > 0) {
-            result = (char)(overflow + '0') + result;
-        }
-        results.push_back(result);
-    }
+    // 掛け算自体は正の整数として計算する
+    std::string result = IntString_Mult(factor1.vstr, factor2.vstr);
 
-    // 結果をすべて足し合わせる
-    FPValue resultValue;
-    for (int i = 0; i < results.size(); i++) {
-        resultValue = FPValue::Add(resultValue, FPValue(results[i]));
-    }
-
-    return FPValue(sign, resultValue.vstr, factor1.dp + factor2.dp);
+    // 小数点の数を足してリターンする
+    return FPValue(sign, result, factor1.dp + factor2.dp);
 }
 
 // 2つの数値の割り算
 FPValue FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace, bool roundLast)
 {
-    printf("Div (%s, %s, dplace=%d)\n", dividend.to_s().c_str(), divisor.to_s().c_str(), decimalPlace);
-
     assert(decimalPlace >= 0);
+    //printf("Div (%s, %s, dplace=%d)\n", dividend.to_s().c_str(), divisor.to_s().c_str(), decimalPlace);
 
     // ゼロ除算のチェック
     if (divisor.IsZero()) {

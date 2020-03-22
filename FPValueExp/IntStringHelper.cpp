@@ -1,4 +1,5 @@
 #include "IntStringHelper.hpp"
+#include <vector>
 
 
 // 正の整数を表す文字列を、不要なゼロが付いていない形式に正規化する。
@@ -35,6 +36,46 @@ int IntString_Compare(const std::string& istr_n_1, const std::string& istr_n_2)
     }
     return 0;
 }
+
+// 正の整数を表す文字列同士で、足し算を計算する。
+std::string IntString_Add(const std::string& istr_n_1, const std::string& istr_n_2)
+{
+    // 桁数を合わせる
+    std::string str1 = istr_n_1;
+    std::string str2 = istr_n_2;
+    int len1 = (int)str1.length();
+    int len2 = (int)str2.length();
+    while (len1 < len2) {
+        str1 = "0" + str1;
+        len1++;
+    }
+    while (len2 < len1) {
+        str2 = "0" + str2;
+        len2++;
+    }
+
+    // 足し算を計算する
+    std::string result = "";
+    int len = (int)str1.length();
+    int overflow = 0;
+    for (int i = 0; i < len; i++) {
+        int v1 = str1[len-i-1] - '0';
+        int v2 = str2[len-i-1] - '0';
+        int v3 = v1 + v2 + overflow;
+        //printf("  %d + %d (+ %d) => %d\n", v1, v2, overflow, v3);
+        overflow = v3 / 10;
+        //printf("    overflow = %d\n", overflow);
+        result = (char)((v3 % 10) + '0') + result;
+        //printf("    result = [%s]\n", result.c_str());
+    }
+    if (overflow > 0) {
+        result = (char)(overflow + '0') + result;
+    }
+
+    // 正規化した値をリターンする
+    return IntString_Normalize(result);
+}
+
 
 // 正の整数を表す文字列同士で、引き算を計算する。
 std::string IntString_Sub(const std::string& minuend_istr_n, const std::string& subtrahend_istr_n)
@@ -73,6 +114,43 @@ std::string IntString_Sub(const std::string& minuend_istr_n, const std::string& 
 
     // 正規化してリターン
     return IntString_Normalize(result);
+}
+
+// 正の整数を表す文字列同士で、掛け算を計算する。
+std::string IntString_Mult(const std::string& istr_n_1, const std::string& istr_n_2)
+{
+    // 各桁ごとに掛け算を計算
+    std::vector<std::string> results;
+    int len2 = (int)istr_n_2.length();
+    for (int i = 0; i < len2; i++) {
+        std::string result = "";
+        for (int j = 0; j < i; j++) {
+            result = result + "0";
+        }
+        int v2 = istr_n_2[len2-i-1] - '0';
+        int overflow = 0;
+        int len1 = (int)istr_n_1.length();
+        for (int j = 0; j < len1; j++) {
+            int v1 = istr_n_1[len1-j-1] - '0';
+            int v3 = v1 * v2 + overflow;
+            overflow = v3 / 10;
+            v3 -= overflow * 10;
+            result = (char)(v3 + '0') + result;
+        }
+        if (overflow > 0) {
+            result = (char)(overflow + '0') + result;
+        }
+        results.push_back(result);
+    }
+
+    // 結果をすべて足し合わせる
+    std::string resultValue = "0";
+    for (int i = 0; i < results.size(); i++) {
+        resultValue = IntString_Add(resultValue, results[i]);
+    }
+
+    // 正規化してリターンする
+    return IntString_Normalize(resultValue);
 }
 
 // 正の整数を表す文字列同士で、割り算を計算する。
