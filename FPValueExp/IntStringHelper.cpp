@@ -56,11 +56,10 @@ std::string IntString_Add(const std::string& istr_n_1, const std::string& istr_n
 
     // 足し算を計算する
     std::string result = "";
-    int len = (int)str1.length();
     int overflow = 0;
-    for (int i = 0; i < len; i++) {
-        int v1 = str1[len-i-1] - '0';
-        int v2 = str2[len-i-1] - '0';
+    for (int i = 0; i < len1; i++) {
+        int v1 = str1[len1-i-1] - '0';
+        int v2 = str2[len1-i-1] - '0';
         int v3 = v1 + v2 + overflow;
         //printf("  %d + %d (+ %d) => %d\n", v1, v2, overflow, v3);
         overflow = v3 / 10;
