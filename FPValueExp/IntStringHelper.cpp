@@ -188,4 +188,17 @@ std::pair<std::string, std::string> IntString_Div(const std::string& dend_istr_n
     return std::make_pair(result_istr, remain_istr);
 }
 
-
+// 整数baseのexponent乗
+std::string IntString_Pow(const std::string& base, const std::string& exponent)
+{
+    if (exponent == "0") {
+        return "1";
+    }
+    std::string ret = "1";
+    std::string exp = exponent;
+    while (exp != "0") {
+        ret = IntString_Mult(ret, base);
+        exp = IntString_Sub(exp, "1");
+    }
+    return ret;
+}

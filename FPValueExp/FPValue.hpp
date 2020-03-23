@@ -36,7 +36,7 @@ class FPValue
     int         dp;
 
     /*! to_s()サポートのための文字列 */
-    std::string str_buffer;
+    mutable std::string str_buffer;
 
 public:
     /*! 2つの数値の絶対値の大小比較を行います。|value1|>|value2|のときは正の数を、同じ数であれば0を、|value1|<|value2|のときは負の数をリターンします。 */
@@ -66,7 +66,7 @@ public:
     static FPValue Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace, bool roundLast);
 
     /*! 数値baseをexponent乗した数値を計算します。 */
-    static FPValue Pow(const FPValue& base, const FPValue& exponent);
+    static FPValue Pow(const FPValue& base, const FPValue& exponent, int macCount);
 
 public:
     /*! デフォルトコンストラクタ。数値を0で初期化します。 */
@@ -145,17 +145,17 @@ public:
     FPValue operator%(const FPValue& other) const;
 
     /*! C言語文字列へのキャストのサポート */
-    operator const char *();
+    operator const char *() const;
 
     /*! C++文字列へのキャストのサポート */
-    operator std::string();
+    operator std::string() const;
 
 public:
     /*! この数値を表す文字列を、符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった形式でリターンします。 */
-    std::string to_s();
+    std::string to_s() const;
 
     /*! この数値を表すC言語文字列を、符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった形式でリターンします。 */
-    const char *c_str();
+    const char *c_str() const;
 
 };
 

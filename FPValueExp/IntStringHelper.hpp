@@ -38,4 +38,9 @@ std::string IntString_Mult(const std::string& istr_n_1, const std::string& istr_
  */
 std::pair<std::string, std::string> IntString_Div(const std::string& dend_istr_n, const std::string& dor_istr_n);
 
+/*!
+    整数baseを、exponent乗した数値を計算します。
+ */
+std::string IntString_Pow(const std::string& base, const std::string& exponent);
+
 #endif /* IntStringHelper_hpp */
