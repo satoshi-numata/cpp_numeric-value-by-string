@@ -12,7 +12,7 @@ FPValue FPMath::LogBaseE(int dp)
     std::string base = "0";
     for (int i = 0; i < INT_MAX; i++) {
         std::string fact = IntString_Fact(base);
-        ret = ret + FPValue::Div(FPValue("1"), fact, dp, true);
+        ret += FPValue::Div(FPValue("1"), fact, dp, true);
         if (i >= 10 && ret.dp == dp) {
             if (last_vstr == ret.vstr) {
                 sameCount++;

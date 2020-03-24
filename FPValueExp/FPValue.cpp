@@ -490,6 +490,42 @@ FPValue FPValue::operator^(const FPValue& exponent) const
     return FPMath::Pow(*this, exponent, 5);
 }
 
+// 加算代入演算子のオーバーロード
+FPValue& FPValue::operator+=(const FPValue& other)
+{
+    *this = FPValue::Add(*this, other);
+    return *this;
+}
+
+// 減算代入演算子のオーバーロード
+FPValue& FPValue::operator-=(const FPValue& other)
+{
+    *this = FPValue::Sub(*this, other);
+    return *this;
+}
+
+// 乗算代入演算子のオーバーロード
+FPValue& FPValue::operator*=(const FPValue& other)
+{
+    *this = FPValue::Mult(*this, other);
+    return *this;
+}
+
+// 除算代入演算子のオーバーロード
+FPValue& FPValue::operator/=(const FPValue& other)
+{
+    *this = *this / other;
+    return *this;
+}
+
+// 累乗代入演算子のオーバーロード
+FPValue& FPValue::operator^=(const FPValue& other)
+{
+    *this = *this ^ other;
+    return *this;
+}
+
+
 // C言語文字列へのキャストのサポート
 FPValue::operator const char *() const
 {

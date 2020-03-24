@@ -147,6 +147,21 @@ public:
     /*! 累乗演算子のオーバーロード */
     FPValue operator^(const FPValue& other) const;
 
+    /*! 加算代入演算子のオーバーロード */
+    FPValue& operator+=(const FPValue& other);
+
+    /*! 減算代入演算子のオーバーロード */
+    FPValue& operator-=(const FPValue& other);
+
+    /*! 乗算代入演算子のオーバーロード */
+    FPValue& operator*=(const FPValue& other);
+
+    /*! 除算代入演算子のオーバーロード */
+    FPValue& operator/=(const FPValue& other);
+
+    /*! 累乗代入演算子のオーバーロード */
+    FPValue& operator^=(const FPValue& other);
+
     /*! C言語文字列へのキャストのサポート */
     operator const char *() const;
 
