@@ -4,6 +4,9 @@
 #include <string>
 
 
+struct FPMath;
+
+
 enum RoundMode {
     /*! 数値をもっとも近い値に丸めます。真ん中の値は0から遠い方に丸められます。いわゆる四捨五入です。 */
     RoundMode_HalfUp,
@@ -64,9 +67,6 @@ public:
         @return 割り算の結果
      */
     static FPValue Div(const FPValue& dividend, const FPValue& divisor, int decimalPlace, bool roundLast);
-
-    /*! 数値baseをexponent乗した数値を計算します。 */
-    static FPValue Pow(const FPValue& base, const FPValue& exponent, int macCount);
 
 public:
     /*! デフォルトコンストラクタ。数値を0で初期化します。 */
@@ -156,6 +156,9 @@ public:
 
     /*! この数値を表すC言語文字列を、符号・数値・小数点を含む"3.14159", "+3.14", "-2.6352"といった形式でリターンします。 */
     const char *c_str() const;
+
+public:
+    friend FPMath;
 
 };
 

@@ -10,6 +10,7 @@
 		8E9F16CC2424C251007EAE0E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F16CB2424C251007EAE0E /* main.cpp */; };
 		8E9F16D42424C25A007EAE0E /* FPValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F16D22424C25A007EAE0E /* FPValue.cpp */; };
 		8E9F174724270831007EAE0E /* IntStringHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F174524270831007EAE0E /* IntStringHelper.cpp */; };
+		8E9F174D242A1C7E007EAE0E /* FPMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9F174C242A1C7E007EAE0E /* FPMath.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,8 @@
 		8E9F16D32424C25A007EAE0E /* FPValue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FPValue.hpp; sourceTree = "<group>"; };
 		8E9F174524270831007EAE0E /* IntStringHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntStringHelper.cpp; sourceTree = "<group>"; };
 		8E9F174624270831007EAE0E /* IntStringHelper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IntStringHelper.hpp; sourceTree = "<group>"; };
+		8E9F174B242A1C7E007EAE0E /* FPMath.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FPMath.hpp; sourceTree = "<group>"; };
+		8E9F174C242A1C7E007EAE0E /* FPMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FPMath.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +67,8 @@
 			isa = PBXGroup;
 			children = (
 				8E9F16CB2424C251007EAE0E /* main.cpp */,
+				8E9F174B242A1C7E007EAE0E /* FPMath.hpp */,
+				8E9F174C242A1C7E007EAE0E /* FPMath.cpp */,
 				8E9F16D32424C25A007EAE0E /* FPValue.hpp */,
 				8E9F16D22424C25A007EAE0E /* FPValue.cpp */,
 				8E9F174624270831007EAE0E /* IntStringHelper.hpp */,
@@ -132,6 +137,7 @@
 				8E9F16CC2424C251007EAE0E /* main.cpp in Sources */,
 				8E9F16D42424C25A007EAE0E /* FPValue.cpp in Sources */,
 				8E9F174724270831007EAE0E /* IntStringHelper.cpp in Sources */,
+				8E9F174D242A1C7E007EAE0E /* FPMath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

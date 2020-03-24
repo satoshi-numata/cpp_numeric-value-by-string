@@ -188,6 +188,25 @@ std::pair<std::string, std::string> IntString_Div(const std::string& dend_istr_n
     return std::make_pair(result_istr, remain_istr);
 }
 
+// 正の整数の階乗
+std::string IntString_Fact(const std::string& istr_n)
+{
+    std::string ret = "1";
+
+    // ゼロの階乗は1とする
+    if (istr_n == "0") {
+        return ret;
+    }
+
+    // 階乗の計算
+    std::string n = istr_n;
+    while (n != "1") {
+        ret = IntString_Mult(ret, n);
+        n = IntString_Sub(n, "1");
+    }
+    return ret;
+}
+
 // 整数baseのexponent乗
 std::string IntString_Pow(const std::string& base, const std::string& exponent)
 {
