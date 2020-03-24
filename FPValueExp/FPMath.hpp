@@ -9,6 +9,9 @@ struct FPMath
     /*! 自然対数の底eを求めます。 */
     static FPValue  LogBaseE(int dp);
 
+    /*! 円周率を小数点以下dp桁まで求めます。 */
+    static FPValue  Pi(int dp);
+
     /*! サインを計算します。 */
     static FPValue  Sin(const FPValue& angle, int dp);
 

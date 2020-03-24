@@ -26,7 +26,8 @@ int main()
         printf("e=%s\n", FPMath::LogBaseE(20).c_str());
 
         // サイン・コサインの計算
-        FPValue angle("3.14159265358979");
+        FPValue angle(FPMath::Pi(40));
+        printf("angle=%s\n", angle.c_str());
         printf("sin=%s\n", FPMath::Sin(angle, 20).c_str());
         printf("cos=%s\n", FPMath::Cos(angle, 20).c_str());
 
