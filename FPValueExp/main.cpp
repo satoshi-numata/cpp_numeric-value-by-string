@@ -21,14 +21,13 @@ int main()
         printf("value1/value2=[%s]\n", (value1 / value2).c_str());
         printf("value1/value2=[%s]\n", FPValue::Div(value1, value2, 20, true).c_str());
         printf("value1%%value2=[%s]\n", (value1 % value2).c_str());*/
-
-        printf("value1^value2=%s\n", FPValue::Pow(value1, value2, 9).c_str());
+        printf("value1^value2=%s\n", FPMath::Pow(value1, value2, 9).c_str());
 
         // 自然対数の底
         printf("e=%s\n", FPMath::LogBaseE(20).c_str());
 
         // サイン・コサインの計算
-        FPValue angle("3.14");
+        FPValue angle("3.1415926");
         printf("sin=%s\n", FPMath::Sin(angle, 20).c_str());
         printf("cos=%s\n", FPMath::Cos(angle, 20).c_str());
 

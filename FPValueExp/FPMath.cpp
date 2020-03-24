@@ -39,7 +39,7 @@ FPValue FPMath::Sin(const FPValue& angle, int dp)
     int sign = 1;
     for (int i = 0; i < INT_MAX; i++) {
         std::string fact = IntString_Fact(base);
-        FPValue num = FPValue::Pow(angle, base, 20);
+        FPValue num = Pow(angle, base, 20);
         FPValue p = FPValue::Div(num, fact, dp, true);
         ret = (sign > 0)? (ret + p): (ret - p);
         if (i >= 10 && ret.dp == dp) {
@@ -78,7 +78,7 @@ FPValue FPMath::Cos(const FPValue& angle, int dp)
     int sign = 1;
     for (int i = 0; i < INT_MAX; i++) {
         std::string fact = IntString_Fact(base);
-        FPValue num = FPValue::Pow(angle, base, 20);
+        FPValue num = Pow(angle, base, 20);
         FPValue p = FPValue::Div(num, fact, dp, true);
         ret = (sign > 0)? (ret + p): (ret - p);
         if (i >= 10 && ret.dp == dp) {
@@ -104,30 +104,57 @@ FPValue FPMath::Cos(const FPValue& angle, int dp)
     }
     return ret;
 }
-/*
+
+// baseのexponent乗
+FPValue FPMath::Pow(const FPValue& base, const FPValue& exponent, int macCount)
 {
-    FPValue c("0");
-    FPValue fact("1");
-    FPValue dfact("2");
-    FPValue exp("0");
-    int sign = 1;
-    for (int i = 0; i < 20; i++) {
-        FPValue num = FPValue::Pow(angle, exp, 20);
-        if (sign > 0) {
-            c = c + num / fact;
-        } else {
-            c = c - num / fact;
-        }
-        //printf("%d: num=%s, fact=%s, s=%s\n", i, num.c_str(), fact.c_str(), s.c_str());
-        sign *= -1;
-        fact = fact * dfact;
-        dfact = dfact + FPValue("1");
-        if (i > 0) {
-            fact = fact * dfact;
-            dfact = dfact + FPValue("1");
-        }
-        exp = exp + FPValue("2");
+    //printf("Pow (base=%s, exp=%s)\n", base.c_str(), exponent.c_str());
+
+    // ゼロ乗は1と定義する
+    if (exponent.IsZero()) {
+        return FPValue("1");
     }
-    printf("c=%s\n", c.c_str());
+
+    FPValue absexp = (exponent.sign > 0)? exponent: -exponent;
+
+    // 整数乗の場合は普通に掛け算を計算する
+    if (exponent.dp == 0) {
+        FPValue pow("1");
+        FPValue exp(absexp);
+        while (!exp.IsZero()) {
+            pow = pow * base;
+            exp = exp - FPValue("1");
+        }
+        return (exponent.sign > 0)? pow: (FPValue("1") / pow);
+    }
+
+    // 小数乗の場合はマクローリン展開を計算する
+    int dimCount = 0;
+    FPValue pow("1");
+    FPValue x = base - FPValue("1");
+    FPValue alpha(absexp);
+    FPValue dalpha("1");
+    //printf("dimCount=%d, pow=%s\n", dimCount, pow.c_str());
+
+    while (dimCount < macCount - 1) {
+        FPValue fact("1");
+        FPValue ffact("2");
+        for (int i = 0; i < dimCount; i++) {
+            fact = fact * ffact;
+            ffact = ffact + FPValue("1");
+        }
+        FPValue p(x);
+        for (int i = 0; i < dimCount; i++) {
+            p = p * x;
+        }
+        //printf("  fact=%s, p=%s, alhpha=%s\n", fact.c_str(), p.c_str(), alpha.c_str());
+        pow = pow + (alpha * p / fact);
+        dimCount++;
+        //printf("dimCount=%d, pow=%s\n", dimCount, pow.c_str());
+        alpha = alpha * (absexp - dalpha);
+        dalpha = dalpha + FPValue("1");
+    }
+
+    return (exponent.sign > 0)? pow: (FPValue("1") / pow);
 }
-*/
+

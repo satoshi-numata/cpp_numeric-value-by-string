@@ -263,59 +263,6 @@ FPValue FPValue::Div(const FPValue& dividend, const FPValue& divisor, int decima
     return FPValue(result);
 }
 
-// baseのexponent乗
-FPValue FPValue::Pow(const FPValue& base, const FPValue& exponent, int macCount)
-{
-    //printf("Pow (base=%s, exp=%s)\n", base.c_str(), exponent.c_str());
-
-    // ゼロ乗は1と定義する
-    if (exponent.IsZero()) {
-        return FPValue("1");
-    }
-
-    FPValue absexp = (exponent.sign > 0)? exponent: -exponent;
-
-    // 整数乗の場合は普通に掛け算を計算する
-    if (exponent.dp == 0) {
-        FPValue pow("1");
-        FPValue exp(absexp);
-        while (!exp.IsZero()) {
-            pow = pow * base;
-            exp = exp - FPValue("1");
-        }
-        return (exponent.sign > 0)? pow: (FPValue("1") / pow);
-    }
-
-    // 小数乗の場合はマクローリン展開を計算する
-    int dimCount = 0;
-    FPValue pow("1");
-    FPValue x = base - FPValue("1");
-    FPValue alpha(absexp);
-    FPValue dalpha("1");
-    //printf("dimCount=%d, pow=%s\n", dimCount, pow.c_str());
-
-    while (dimCount < macCount - 1) {
-        FPValue fact("1");
-        FPValue ffact("2");
-        for (int i = 0; i < dimCount; i++) {
-            fact = fact * ffact;
-            ffact = ffact + FPValue("1");
-        }
-        FPValue p(x);
-        for (int i = 0; i < dimCount; i++) {
-            p = p * x;
-        }
-        //printf("  fact=%s, p=%s, alhpha=%s\n", fact.c_str(), p.c_str(), alpha.c_str());
-        pow = pow + (alpha * p / fact);
-        dimCount++;
-        //printf("dimCount=%d, pow=%s\n", dimCount, pow.c_str());
-        alpha = alpha * (absexp - dalpha);
-        dalpha = dalpha + FPValue("1");
-    }
-
-    return (exponent.sign > 0)? pow: (FPValue("1") / pow);
-}
-
 
 // デフォルトコンストラクタ
 FPValue::FPValue()
