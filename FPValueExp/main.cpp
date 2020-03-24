@@ -21,7 +21,7 @@ int main()
         printf("value1/value2=[%s]\n", (value1 / value2).c_str());
         printf("value1/value2=[%s]\n", FPValue::Div(value1, value2, 20, true).c_str());
         printf("value1%%value2=[%s]\n", (value1 % value2).c_str());*/
-        printf("value1^value2=%s\n", FPMath::Pow(value1, value2, 9).c_str());
+        printf("value1^value2=%s\n", (value1 ^ value2).c_str());
 
         // 自然対数の底
         printf("e=%s\n", FPMath::LogBaseE(20).c_str());

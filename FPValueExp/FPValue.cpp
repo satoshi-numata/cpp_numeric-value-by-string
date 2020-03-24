@@ -1,5 +1,6 @@
 #include "FPValue.hpp"
 #include "IntStringHelper.hpp"
+#include "FPMath.hpp"
 
 #include <cassert>
 #include <cctype>
@@ -481,6 +482,12 @@ FPValue FPValue::operator%(const FPValue& other) const
 {
     FPValue quot = FPValue::Div(*this, other, 0, false);
     return (*this - other * quot);
+}
+
+// 累乗演算子のオーバーロード
+FPValue FPValue::operator^(const FPValue& exponent) const
+{
+    return FPMath::Pow(*this, exponent, 5);
 }
 
 // C言語文字列へのキャストのサポート

@@ -106,7 +106,7 @@ FPValue FPMath::Cos(const FPValue& angle, int dp)
 }
 
 // baseのexponent乗
-FPValue FPMath::Pow(const FPValue& base, const FPValue& exponent, int macCount)
+FPValue FPMath::Pow(const FPValue& base, const FPValue& exponent, int dp)
 {
     //printf("Pow (base=%s, exp=%s)\n", base.c_str(), exponent.c_str());
 
@@ -136,7 +136,7 @@ FPValue FPMath::Pow(const FPValue& base, const FPValue& exponent, int macCount)
     FPValue dalpha("1");
     //printf("dimCount=%d, pow=%s\n", dimCount, pow.c_str());
 
-    while (dimCount < macCount - 1) {
+    while (dimCount < dp - 1) {
         FPValue fact("1");
         FPValue ffact("2");
         for (int i = 0; i < dimCount; i++) {

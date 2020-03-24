@@ -16,7 +16,7 @@ struct FPMath
     static FPValue  Cos(const FPValue& angle, int dp);
 
     /*! 数値baseをexponent乗した数値を計算します。 */
-    static FPValue  Pow(const FPValue& base, const FPValue& exponent, int macCount);
+    static FPValue  Pow(const FPValue& base, const FPValue& exponent, int dp);
 
 };
 

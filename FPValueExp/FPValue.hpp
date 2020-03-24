@@ -144,6 +144,9 @@ public:
     /*! 剰余演算子のオーバーロード */
     FPValue operator%(const FPValue& other) const;
 
+    /*! 累乗演算子のオーバーロード */
+    FPValue operator^(const FPValue& other) const;
+
     /*! C言語文字列へのキャストのサポート */
     operator const char *() const;
 
